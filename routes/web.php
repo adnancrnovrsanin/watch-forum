@@ -1,7 +1,9 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CommentController;
 use App\Http\Controllers\ConversationController;
+use App\Http\Controllers\ReplyController;
 use App\Http\Controllers\TopicController;
 use Illuminate\Support\Facades\Route;
 
@@ -19,10 +21,16 @@ use Illuminate\Support\Facades\Route;
 Route::get('', fn () => to_route('topics.index'));
 
 Route::resource('topics', TopicController::class)
-    ->only(['index', 'show']);
+    ->only(['index', 'show', 'create', 'store']);
 
 Route::resource('conversations', ConversationController::class)
-    ->only(['show']);
+    ->only(['show', 'store']);
+
+Route::resource('comments', CommentController::class)
+    ->only(['store']);
+
+Route::resource('replies', ReplyController::class)
+    ->only(['store']);
 
 Route::prefix('auth')->group(function () {
     Route::get('login', [AuthController::class, 'login_form'])->name('auth.login');

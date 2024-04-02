@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Comment;
 use App\Models\Conversation;
-use App\Models\Topic;
 use Illuminate\Http\Request;
 
-class ConversationController extends Controller
+class CommentController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -27,19 +27,15 @@ class ConversationController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Topic $topic, Request $request)
+    public function store(Conversation $conversation, Request $request)
     {
-        $this->authorize('create', Conversation::class);
-
         $request->validate([
-            'title' => 'required|string|max:255',
-            'description' => 'required|string',
+            'content' => 'required|string',
         ]);
 
-        $conversation = Conversation::create([
-            'title' => $request->title,
-            'description' => $request->description,
-            'topic_id' => $topic->id,
+        Comment::create([
+            'content' => $request->content,
+            'conversation_id' => $conversation->id,
             'user_id' => auth()->id(),
         ]);
 
@@ -49,14 +45,9 @@ class ConversationController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Conversation $conversation)
+    public function show(string $id)
     {
-        $this->authorize('viewAny', $conversation);
-
-        return view('conversation.show', [
-            'conversation' => $conversation->load('user', 'comments.user', 'comments.replies.user'),
-            'topic' => $conversation->topic,
-        ]);
+        //
     }
 
     /**

@@ -12,6 +12,8 @@ class TopicController extends Controller
      */
     public function index()
     {
+        $this->authorize('viewAny', Topic::class);
+
         return view('topic.index', ['topics' => Topic::all()]);
     }
 
@@ -20,7 +22,9 @@ class TopicController extends Controller
      */
     public function create()
     {
-        //
+        $this->authorize('create', Topic::class);
+
+        return view('topic.create');
     }
 
     /**
@@ -28,7 +32,20 @@ class TopicController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $this->authorize('create', Topic::class);
+
+        $request->validate([
+            'name' => 'required',
+            'description' => 'required',
+        ]);
+
+        $topic = Topic::create([
+            'name' => $request->name,
+            'description' => $request->description,
+            'user_id' => auth()->id(),
+        ]);
+
+        return redirect()->route('topics.show', $topic);
     }
 
     /**
