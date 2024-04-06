@@ -23,17 +23,20 @@ class DatabaseSeeder extends Seeder
 
         \App\Models\User::factory()->create([
             'name' => 'Adnan Crnovrsanin',
-            'email' => 'adnan@gmail.com'
+            'email' => 'adnan@gmail.com',
+            'approve_status' => 'APPROVED',
         ]);
         \App\Models\User::factory()->create([
             'name' => 'Admin',
             'email' => 'admin@gmail.com',
             'role_id' => $adminRoleId,
+            'approve_status' => 'APPROVED',
         ]);
         \App\Models\User::factory()->create([
             'name' => 'Moderator 1',
             'email' => 'moderator@gmail.com',
             'role_id' => $moderatorRoleId,
+            'approve_status' => 'APPROVED',
         ]);
 
         \App\Models\User::factory(5)->create([
@@ -41,8 +44,12 @@ class DatabaseSeeder extends Seeder
         ]);
         $moderators = \App\Models\User::where('role_id', $moderatorRoleId)->get();
 
+        \App\Models\User::factory(30)->create([
+            'role_id' => null,
+        ]);
+
         foreach ($moderators as $moderator) {
-            \App\Models\Topic::factory()->create([
+            \App\Models\Topic::factory(3)->create([
                 'user_id' => $moderator->id,
             ]);
         }
@@ -63,7 +70,7 @@ class DatabaseSeeder extends Seeder
         $conversations = \App\Models\Conversation::all();
 
         foreach ($conversations as $conversation) {
-            for($i = 0; $i < random_int(10, 15); $i++) {
+            for ($i = 0; $i < random_int(10, 15); $i++) {
                 \App\Models\Comment::factory()->create([
                     'user_id' => $usersAndModerators->random()->id,
                     'conversation_id' => $conversation->id,
@@ -77,6 +84,26 @@ class DatabaseSeeder extends Seeder
                 \App\Models\Reply::factory()->create([
                     'user_id' => $usersAndModerators->random()->id,
                     'comment_id' => $comment->id,
+                ]);
+            }
+        }
+
+        $users = \App\Models\User::whereNotIn('role_id', [$adminRoleId])->get();
+        $topics = \App\Models\Topic::all();
+
+        foreach ($users as $user) {
+            // Get random topics IDs
+            $followedTopics = $topics->random(rand(3, 6))->pluck('id');
+
+            // Sync without detaching existing
+            $user->followedTopics()->syncWithoutDetaching($followedTopics);
+        }
+
+        foreach ($comments as $comment) {
+            $usersVoted = $usersAndModerators->random(rand(0, 20))->pluck('id');
+            foreach ($usersVoted as $userVoted) {
+                $comment->usersVoted()->attach($userVoted, [
+                    'vote' => random_int(-1, 1) !== 0 ? random_int(-1, 1) : (random_int(0, 1) === 0 ? -1 : 1),
                 ]);
             }
         }

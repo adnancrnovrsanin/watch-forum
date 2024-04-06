@@ -11,17 +11,18 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('topics', function (Blueprint $table) {
+        Schema::create('reply_user', function (Blueprint $table) {
             $table->id();
 
-            $table->string('name');
-            $table->text('description')->nullable();
-            
-            $table->enum('approve_status', ['APPROVED', 'PENDING', 'REJECTED'])->default('PENDING');
+            $table->foreignIdFor(\App\Models\Reply::class)
+                ->constrained()
+                ->onDelete('cascade');
 
             $table->foreignIdFor(\App\Models\User::class)
                 ->constrained()
                 ->onDelete('cascade');
+
+            $table->unsignedInteger('vote')->default(0);
 
             $table->timestamps();
         });
@@ -32,6 +33,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('topics');
+        Schema::dropIfExists('reply_user');
     }
 };

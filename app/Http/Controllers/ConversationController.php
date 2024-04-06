@@ -36,14 +36,14 @@ class ConversationController extends Controller
             'description' => 'required|string',
         ]);
 
-        $conversation = Conversation::create([
+        $topic->conversations()->create([
             'title' => $request->title,
             'description' => $request->description,
-            'topic_id' => $topic->id,
-            'user_id' => auth()->id(),
+            'user_id' => $request->user()->id,
         ]);
 
-        return redirect()->route('conversations.show', $conversation);
+        return redirect()->route('topics.show', $topic)
+            ->with('success', 'Conversation created successfully!');
     }
 
     /**
@@ -62,24 +62,44 @@ class ConversationController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(Conversation $conversation)
     {
-        //
+        $this->authorize('update', $conversation);
+
+        return view('conversation.edit', compact('conversation'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, Conversation $conversation)
     {
-        //
+        $this->authorize('update', $conversation);
+
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'description' => 'required|string',
+        ]);
+
+        $conversation->update([
+            'title' => $request->title,
+            'description' => $request->description,
+        ]);
+
+        return redirect()->route('conversations.show', $conversation)
+            ->with('success', 'Conversation updated successfully!');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Conversation $conversation)
     {
-        //
+        $this->authorize('delete', $conversation);
+
+        $conversation->delete();
+
+        return redirect()->route('topics.show', $conversation->topic)
+            ->with('success', 'Conversation deleted successfully!');
     }
 }

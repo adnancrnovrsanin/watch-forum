@@ -29,17 +29,20 @@ class CommentController extends Controller
      */
     public function store(Conversation $conversation, Request $request)
     {
+        $this->authorize('create', Comment::class);
+
         $request->validate([
             'content' => 'required|string',
         ]);
 
-        Comment::create([
+        $conversation->comments()->create([
             'content' => $request->content,
             'conversation_id' => $conversation->id,
-            'user_id' => auth()->id(),
+            'user_id' => $request->user()->id,
         ]);
 
-        return redirect()->route('conversations.show', $conversation);
+        return redirect()->route('conversations.show', $conversation)
+            ->with('success', 'Comment submitted successfully!');
     }
 
     /**
@@ -72,5 +75,24 @@ class CommentController extends Controller
     public function destroy(string $id)
     {
         //
+    }
+
+    public function vote(Comment $comment, Request $request)
+    {
+        if (auth()->user() === null) {
+            return redirect()->route('login');
+        }
+
+        $request->validate([
+            'vote' => 'required|in:-1,1',
+        ]);
+
+        $comment->usersVoted()->detach($request->user());
+        
+        $comment->usersVoted()->syncWithoutDetaching([
+            $request->user()->id => ['vote' => $request->vote],
+        ]);
+
+        return back()->with('success', 'Vote submitted successfully!');
     }
 }

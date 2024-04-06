@@ -20,8 +20,16 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'name',
+        'username',
+        'phone',
+        'avatar',
+        'gender',
+        'dob',
+        'country',
+        'JMBG',
         'email',
         'password',
+        'approve_status',
     ];
 
     /**
@@ -66,5 +74,20 @@ class User extends Authenticatable
     public function replies()
     {
         return $this->hasMany(Reply::class);
+    }
+
+    public function followedTopics()
+    {
+        return $this->belongsToMany(Topic::class);
+    }
+
+    public function votedComments()
+    {
+        return $this->belongsToMany(Comment::class);
+    }
+
+    public function votedReplies()
+    {
+        return $this->belongsToMany(Reply::class);
     }
 }

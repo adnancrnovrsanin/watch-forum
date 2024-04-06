@@ -14,7 +14,7 @@ class TopicController extends Controller
     {
         $this->authorize('viewAny', Topic::class);
 
-        return view('topic.index', ['topics' => Topic::all()]);
+        return view('topic.index', ['topics' => Topic::where('approve_status', 'APPROVED')->get()]);
     }
 
     /**
@@ -42,7 +42,7 @@ class TopicController extends Controller
         $topic = Topic::create([
             'name' => $request->name,
             'description' => $request->description,
-            'user_id' => auth()->id(),
+            'user_id' => $request->user()->id,
         ]);
 
         return redirect()->route('topics.show', $topic);
@@ -59,24 +59,64 @@ class TopicController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(Topic $topic)
     {
-        //
+        $this->authorize('update', $topic);
+
+        return view('topic.edit', ['topic' => $topic]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, Topic $topic)
     {
-        //
+        $this->authorize('update', $topic);
+
+        $request->validate([
+            'name' => 'required',
+            'description' => 'required',
+        ]);
+
+        $topic->update([
+            'name' => $request->name,
+            'description' => $request->description,
+        ]);
+
+        return redirect()->route('topics.show', $topic)
+            ->with('success', 'Topic updated successfully!');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Topic $topic)
     {
-        //
+        $this->authorize('delete', $topic);
+
+        $topic->delete();
+
+        return redirect()->route('topics.index')
+            ->with('success', 'Topic deleted successfully!');
+    }
+
+    /**
+     * Follow the specified topic.
+     */
+    public function follow(Topic $topic, Request $request)
+    {
+        $topic->followers()->attach($request->user());
+
+        return redirect()->route('topics.show', $topic);
+    }
+
+    /**
+     * Unfollow the specified topic.
+     */
+    public function unfollow(Topic $topic, Request $request)
+    {
+        $topic->followers()->detach($request->user());
+
+        return redirect()->route('topics.show', $topic);
     }
 }

@@ -9,7 +9,7 @@ class Comment extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['content', 'conversation_id'];
+    protected $fillable = ['content', 'conversation_id', 'user_id'];
 
     public function conversation()
     {
@@ -24,5 +24,35 @@ class Comment extends Model
     public function replies()
     {
         return $this->hasMany(Reply::class);
+    }
+
+    public function usersVoted()
+    {
+        return $this->belongsToMany(User::class)
+            ->withPivot('vote')
+            ->withTimestamps();
+    }
+
+    public function userVote(?User $user)
+    {
+        if (!$user) {
+            return null;
+        }
+
+        $vote = $this->usersVoted()->where('user_id', $user->id)->first();
+        return $vote ? $vote->pivot->vote : null;
+    }
+
+    public function voteSum()
+    {
+        return $this->usersVoted()->sum('vote');
+    }
+
+    public function hasVoted(?User $user)
+    {
+        if (!$user) {
+            return false;
+        }
+        return $this->usersVoted->contains($user);
     }
 }

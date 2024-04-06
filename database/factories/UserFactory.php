@@ -19,9 +19,17 @@ class UserFactory extends Factory
     {
         return [
             'name' => fake()->name(),
+            'username' => fake()->unique()->userName(),
+            'phone' => fake()->unique()->phoneNumber(),
+            'avatar' => fake()->imageUrl,
+            'gender' => fake()->randomElement(['M', 'F', 'O']),
+            'dob' => fake()->date(),
+            'country' => fake()->country,
+            'JMBG' => fake()->unique()->numerify('###############'), // '###############' is a placeholder for '13' digits
             'email' => fake()->unique()->safeEmail(),
             'email_verified_at' => now(),
             'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password
+            'approve_status' => fake()->randomElement(['APPROVED', 'PENDING', 'REJECTED']),
             'remember_token' => Str::random(10),
         ];
     }

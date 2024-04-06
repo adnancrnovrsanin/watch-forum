@@ -19,6 +19,7 @@ class TopicFactory extends Factory
         return [
             'name' => fake()->sentence,
             'description' => fake()->sentence,
+            'approve_status' => fake()->randomElement(['APPROVED', 'PENDING', 'REJECTED']),
         ];
     }
 }

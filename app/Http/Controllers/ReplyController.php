@@ -35,10 +35,10 @@ class ReplyController extends Controller
             'content' => 'required|string',
         ]);
 
-        Reply::create([
+        $comment->replies()->create([
             'content' => $request->content,
             'comment_id' => $comment->id,
-            'user_id' => auth()->id(),
+            'user_id' => $request->user()->id,
         ]);
 
         return redirect()->route('conversations.show', $comment->conversation);
