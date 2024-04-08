@@ -35,4 +35,27 @@ class Topic extends Model
         }
         return $this->followers->contains($user);
     }
+
+    public function blockedUsers()
+    {
+        return $this->belongsToMany(User::class, 'topic_user_block');
+    }
+
+    public function isBlockedBy(?User $user)
+    {
+        if (!$user) {
+            return false;
+        }
+        return $this->blockedUsers->contains($user);
+    }
+
+    public function polls(): HasMany
+    {
+        return $this->hasMany(Poll::class);
+    }
+
+    public function posts(): HasMany
+    {
+        return $this->hasMany(Post::class);
+    }
 }

@@ -53,6 +53,8 @@ class TopicController extends Controller
      */
     public function show(Topic $topic)
     {
+        $this->authorize('view', $topic);
+
         return view('topic.show', ['topic' => $topic->load('conversations')]);
     }
 

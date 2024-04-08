@@ -21,7 +21,7 @@ class TopicPolicy
      */
     public function view(?User $user, Topic $topic): bool
     {
-        return true;
+        return $topic->approve_status === 'APPROVED';
     }
 
     /**

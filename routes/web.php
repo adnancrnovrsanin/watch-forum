@@ -1,9 +1,13 @@
 <?php
 
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\Article;
+use App\Http\Controllers\ArticleController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\ConversationController;
+use App\Http\Controllers\PollController;
+use App\Http\Controllers\PostController;
 use App\Http\Controllers\ReplyController;
 use App\Http\Controllers\TopicController;
 use App\Http\Controllers\UserController;
@@ -63,3 +67,11 @@ Route::post('admin/reject', [AdminController::class, 'reject'])->name('admin.rej
 Route::get('admin/topic-requests', [AdminController::class, 'topicRequests'])->name('admin.topic-requests');
 Route::post('admin/approve-topic', [AdminController::class, 'approveTopic'])->name('admin.approve-topic');
 Route::post('admin/reject-topic', [AdminController::class, 'rejectTopic'])->name('admin.reject-topic');
+
+Route::post('polls/{pollAnswer}/vote', [PollController::class, 'vote'])->name('polls.vote');
+
+Route::resource('posts', PostController::class)
+    ->only(['show']);
+
+Route::post('topic/{topic}/polls', [PollController::class, 'store'])->name('topic.polls.store');
+Route::get('topic/{topic}/polls/create', [PollController::class, 'create'])->name('topic.polls.create');

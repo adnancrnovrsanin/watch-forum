@@ -43,7 +43,7 @@ class AuthController extends Controller
                     ->with('error', 'Your account is rejected from entering our website');
             }
 
-            if (auth()->user()->role->name === 'ADMIN') {
+            if (auth()->user()->role != null && auth()->user()->role->name === 'ADMIN') {
                 return redirect()->route('admin.dashboard');
             } else {
                 return redirect('/');

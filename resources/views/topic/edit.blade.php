@@ -16,5 +16,13 @@
 
             <x-button class="w-full">Update</x-button>
         </form>
+
+        <form action="{{ route('topics.destroy', $topic) }}" method="POST">
+            @csrf
+            @method('DELETE')
+            <button class="border border-red-700 px-4 py-2 rounded-md hover:bg-red-700 hover:text-white w-full mt-8">
+                Delete this topic
+            </button>
+        </form>
     </x-card>
 </x-layout>

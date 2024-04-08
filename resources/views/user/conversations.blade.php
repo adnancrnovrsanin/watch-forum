@@ -1,4 +1,7 @@
 <x-layout>
+    @if ($conversations->isEmpty())
+    <p class="text-lg font-semibold mt-4">You didn't create a conversation yet.</p>
+    @else
     <x-card class="mb-4">
         <h2 class="mb-10 mt-2 text-xl font-medium">
             Conversations about {{ $conversations->first()->topic->name }}
@@ -12,4 +15,5 @@
         </x-conversation-card>
         @endforeach
     </x-card>
+    @endif
 </x-layout>

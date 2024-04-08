@@ -60,7 +60,7 @@ class DatabaseSeeder extends Seeder
             ->get();
 
         foreach ($topics as $topic) {
-            for ($i = 0; $i < random_int(3, 7); $i++) {
+            for ($i = 0; $i < random_int(2, 5); $i++) {
                 \App\Models\Conversation::factory()->create([
                     'user_id' => $usersAndModerators->random()->id,
                     'topic_id' => $topic->id,
@@ -70,7 +70,7 @@ class DatabaseSeeder extends Seeder
         $conversations = \App\Models\Conversation::all();
 
         foreach ($conversations as $conversation) {
-            for ($i = 0; $i < random_int(10, 15); $i++) {
+            for ($i = 0; $i < random_int(5, 10); $i++) {
                 \App\Models\Comment::factory()->create([
                     'user_id' => $usersAndModerators->random()->id,
                     'conversation_id' => $conversation->id,
@@ -80,7 +80,7 @@ class DatabaseSeeder extends Seeder
         $comments = \App\Models\Comment::all();
 
         foreach ($comments as $comment) {
-            for ($i = 0; $i < random_int(0, 7); $i++) {
+            for ($i = 0; $i < random_int(0, 6); $i++) {
                 \App\Models\Reply::factory()->create([
                     'user_id' => $usersAndModerators->random()->id,
                     'comment_id' => $comment->id,
@@ -105,6 +105,33 @@ class DatabaseSeeder extends Seeder
                 $comment->usersVoted()->attach($userVoted, [
                     'vote' => random_int(-1, 1) !== 0 ? random_int(-1, 1) : (random_int(0, 1) === 0 ? -1 : 1),
                 ]);
+            }
+        }
+
+        // Inserting articles
+        foreach ($topics as $topic) {
+            \App\Models\Post::factory(random_int(0, 5))->create([
+                'topic_id' => $topic->id,
+            ]);
+        }
+
+        // Inserting polls
+        foreach ($topics as $topic) {
+            \App\Models\Poll::factory(random_int(0, 5))->create([
+                'topic_id' => $topic->id,
+            ]);
+        }
+        $polls = \App\Models\Poll::all();
+
+        // Inserting poll answers
+        foreach ($polls as $poll) {
+            \App\Models\PollAnswer::factory(random_int(2, 4))->create([
+                'poll_id' => $poll->id,
+            ]);
+            $pollAnswers = \App\Models\PollAnswer::where('poll_id', $poll->id)->get();
+            $usersToVote = $usersAndModerators->random(rand(0, 20))->pluck('id')->unique();
+            foreach ($usersToVote as $userToVote) {
+                $pollAnswers->random()->usersAnswered()->attach($userToVote);
             }
         }
     }

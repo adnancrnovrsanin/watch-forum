@@ -90,4 +90,14 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Reply::class);
     }
+
+    public function blockedTopics()
+    {
+        return $this->belongsToMany(Topic::class, 'topic_user_block');
+    }
+
+    public function pollAnswers()
+    {
+        return $this->belongsToMany(PollAnswer::class);
+    }
 }

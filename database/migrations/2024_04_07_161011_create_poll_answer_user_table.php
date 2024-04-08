@@ -11,13 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('topic_user', function (Blueprint $table) {
+        Schema::create('poll_answer_user', function (Blueprint $table) {
             $table->id();
 
-            $table->foreignIdFor(\App\Models\Topic::class)->constrained()->onDelete('cascade');
-            $table->foreignIdFor(\App\Models\User::class)->constrained()->onDelete('cascade');
+            $table->foreignIdFor(\App\Models\PollAnswer::class)
+                ->constrained()
+                ->onDelete('cascade');
 
-            $table->boolean('is_blocked')->default(false);
+            $table->foreignIdFor(\App\Models\User::class)
+                ->constrained()
+                ->onDelete('cascade');
 
             $table->timestamps();
         });
@@ -28,6 +31,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('topic_user');
+        Schema::dropIfExists('poll_answer_user');
     }
 };

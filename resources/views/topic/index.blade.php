@@ -12,7 +12,7 @@
     @foreach ($topics->sortByDesc('updated_at') as $topic)
     <x-topic-card class="mb-4" :$topic>
         <x-link-button :href="route('topics.show', $topic)">
-            Show conversations from this topic
+            See details
         </x-link-button>
     </x-topic-card>
     @endforeach
