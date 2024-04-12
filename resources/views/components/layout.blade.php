@@ -58,16 +58,15 @@
                 </div>
 
                 @auth
-                @if($notifications && $notifications->count() > 0)
-                <div class="absolute mt-12 top-0 left-1 min-w-full w-48 z-30" style="display:none;" x-show="showNotifications" x-transition:enter="transition ease duration-100 transform" x-transition:enter-start="opacity-0 scale-90 translate-y-1" x-transition:enter-end="opacity-100 scale-100 translate-y-0" x-transition:leave="transition ease duration-100 transform" x-transition:leave-start="opacity-100 scale-100 translate-y-0" x-transition:leave-end="opacity-0 scale-90 translate-y-1">
-                    <span class="absolute top-0 left-0 w-2 h-2 bg-white transform rotate-45 -mt-1 ml-3 border-gray-300 border-l border-t z-20"></span>
+                <div class="absolute mt-12 top-0 left-1 min-w-full w-64 z-30" style="display:none;" x-show="showNotifications" x-transition:enter="transition ease duration-100 transform" x-transition:enter-start="opacity-0 scale-90 translate-y-1" x-transition:enter-end="opacity-100 scale-100 translate-y-0" x-transition:leave="transition ease duration-100 transform" x-transition:leave-start="opacity-100 scale-100 translate-y-0" x-transition:leave-end="opacity-0 scale-90 translate-y-1">
                     <div class="bg-white overflow-auto rounded-lg shadow-md w-full relative z-10 py-2 border border-gray-300 text-gray-800 text-xs">
-                        @foreach ($notifications as $notification)
-                        <x-notification-card :notification="$notification" />
+                        @if ($notifications->count() > 0)
+                        @foreach ($notifications->sortByDesc('created_at') as $notification)
+                        <x-notification-card :$notification />
                         @endforeach
+                        @endif
                     </div>
                 </div>
-                @endif
                 @endauth
             </div>
 
