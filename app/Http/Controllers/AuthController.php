@@ -58,11 +58,11 @@ class AuthController extends Controller
     {
         $request->validate([
             'name' => 'required',
-            'phone' => 'required',
-            'username' => 'required',
+            'phone' => 'required|unique:users,phone',
+            'username' => 'required|unique:users,username',
             'dob' => 'required',
             'country' => 'required',
-            'JMBG' => 'required',
+            'JMBG' => 'required|unique:users,JMBG',
             'avatar' => 'required|image|mimes:jpg,png|max:2048',
             'gender' => 'required',
             'email' => 'required|email|unique:users,email',

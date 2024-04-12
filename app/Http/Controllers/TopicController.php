@@ -19,9 +19,7 @@ class TopicController extends Controller
         $topics = Topic::where('approve_status', 'APPROVED')
             ->where(function ($query) {
                 if (auth()->check()) {
-                    $query->whereDoesntHave('blockedUsers', function ($query) {
-                        $query->where('user_id', auth()->id());
-                    });
+                    $query->whereDoesntHave('blockedUsers', fn ($query) => $query->where('user_id', auth()->id()));
                 }
             })
             ->get();
@@ -60,13 +58,14 @@ class TopicController extends Controller
             'description' => 'required',
         ]);
 
-        $topic = Topic::create([
+        Topic::create([
             'name' => $request->name,
             'description' => $request->description,
             'user_id' => $request->user()->id,
         ]);
 
-        return redirect()->route('topics.show', $topic);
+        return redirect()->route('topics.index')
+            ->with('success', 'Topic created successfully! Wait for approval.');
     }
 
     /**

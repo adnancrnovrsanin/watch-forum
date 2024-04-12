@@ -20,6 +20,12 @@
         </span>
         has replied to your comment on the conversation titled <span class="font-semibold">{{ $notification->data['conversation_title'] }}</span>
         @break
+        @case(App\Notifications\CommentVotedNotification::class)
+        <span class="font-semibold">
+            {{ $notification->data['user_name'] }}
+        </span>
+        has voted on your comment on the conversation titled <span class="font-semibold">{{ $notification->data['conversation_title'] }}</span>
+        @break
         @default
         <span class="font-semibold">
             {{ $notification->data['user_name'] }}

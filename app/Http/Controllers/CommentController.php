@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Comment;
 use App\Models\Conversation;
+use App\Models\User;
 use App\Notifications\CommentNotification;
+use App\Notifications\CommentVotedNotification;
 use Illuminate\Http\Request;
 
 class CommentController extends Controller
@@ -93,10 +95,13 @@ class CommentController extends Controller
         ]);
 
         $comment->usersVoted()->detach($request->user());
-        
+
         $comment->usersVoted()->syncWithoutDetaching([
             $request->user()->id => ['vote' => $request->vote],
         ]);
+
+        $userThatVoted = User::find($request->user()->id);
+        $comment->user->notify(new CommentVotedNotification($comment, $userThatVoted));
 
         return back()->with('success', 'Vote submitted successfully!');
     }
