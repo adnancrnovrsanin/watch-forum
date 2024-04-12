@@ -73,5 +73,8 @@ Route::post('polls/{pollAnswer}/vote', [PollController::class, 'vote'])->name('p
 Route::resource('posts', PostController::class)
     ->only(['show']);
 
+Route::post('topics/{topic}/user/{user}/block', [TopicController::class, 'blockUser'])->name('topics.user.blockUser');
+Route::delete('topics/{topic}/user/{user}/unblock', [TopicController::class, 'unblockUser'])->name('topics.user.unblockUser');
+
 Route::post('topic/{topic}/polls', [PollController::class, 'store'])->name('topic.polls.store');
 Route::get('topic/{topic}/polls/create', [PollController::class, 'create'])->name('topic.polls.create');

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Comment;
 use App\Models\Reply;
+use App\Notifications\ReplyNotification;
 use Illuminate\Http\Request;
 
 class ReplyController extends Controller
@@ -40,6 +41,8 @@ class ReplyController extends Controller
             'comment_id' => $comment->id,
             'user_id' => $request->user()->id,
         ]);
+
+        $comment->user->notify(new ReplyNotification($comment->replies->last()));
 
         return redirect()->route('conversations.show', $comment->conversation);
     }

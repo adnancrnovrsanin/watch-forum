@@ -38,6 +38,11 @@ class DatabaseSeeder extends Seeder
             'role_id' => $moderatorRoleId,
             'approve_status' => 'APPROVED',
         ]);
+        \App\Models\User::factory()->create([
+            'name' => 'New Me',
+            'email' => 'newme8342@gmail.com',
+            'approve_status' => 'APPROVED',
+        ]);
 
         \App\Models\User::factory(5)->create([
             'role_id' => $moderatorRoleId,

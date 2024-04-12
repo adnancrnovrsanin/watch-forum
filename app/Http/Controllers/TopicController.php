@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Topic;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class TopicController extends Controller
@@ -14,7 +15,27 @@ class TopicController extends Controller
     {
         $this->authorize('viewAny', Topic::class);
 
-        return view('topic.index', ['topics' => Topic::where('approve_status', 'APPROVED')->get()]);
+        // get only approved topics and those that current user is not blocked from if there is a user and if not then only approved topics
+        $topics = Topic::where('approve_status', 'APPROVED')
+            ->where(function ($query) {
+                if (auth()->check()) {
+                    $query->whereDoesntHave('blockedUsers', function ($query) {
+                        $query->where('user_id', auth()->id());
+                    });
+                }
+            })
+            ->get();
+
+        if (auth()->check()) {
+            $user = User::find(auth()->user()->getAuthIdentifier());
+            $followedTopicsFromWhichUserIsNotBlocked = $user->followedTopics()
+                ->whereDoesntHave('blockedUsers', function ($query) {
+                    $query->where('user_id', auth()->id());
+                })
+                ->get();
+        }
+
+        return view('topic.index', ['topics' => $topics, 'userFollowedTopics' => $followedTopicsFromWhichUserIsNotBlocked ?? []]);
     }
 
     /**
@@ -120,5 +141,25 @@ class TopicController extends Controller
         $topic->followers()->detach($request->user());
 
         return redirect()->route('topics.show', $topic);
+    }
+
+    public function blockUser(Request $request, Topic $topic, User $user)
+    {
+        $this->authorize('block', $topic);
+
+        $topic->followers()->detach($user);
+
+        $topic->blockedUsers()->attach($user);
+
+        return back();
+    }
+
+    public function unblockUser(Request $request, Topic $topic, User $user)
+    {
+        $this->authorize('block', $topic);
+
+        $topic->blockedUsers()->detach($user);
+
+        return back();
     }
 }

@@ -11,12 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('topic_user_block', function (Blueprint $table) {
-            $table->id();
-
-            $table->foreignIdFor(\App\Models\Topic::class)->constrained();
-            $table->foreignIdFor(\App\Models\User::class)->constrained();
-
+        Schema::create('notifications', function (Blueprint $table) {
+            $table->uuid('id')->primary();
+            $table->string('type');
+            $table->morphs('notifiable');
+            $table->text('data');
+            $table->timestamp('read_at')->nullable();
             $table->timestamps();
         });
     }
@@ -26,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('topic_user_block');
+        Schema::dropIfExists('notifications');
     }
 };

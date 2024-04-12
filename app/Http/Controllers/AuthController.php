@@ -87,9 +87,8 @@ class AuthController extends Controller
             'avatar' => $response
         ]);
 
-        Auth::login($user);
-
-        return redirect('/');
+        return redirect('/')
+            ->with('success', 'Account created successfully! Now you need to wait for approval.');
     }
 
     public function logout()

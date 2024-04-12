@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Conversation;
 use App\Models\Topic;
+use App\Notifications\NewConversationNotification;
 use Illuminate\Http\Request;
 
 class ConversationController extends Controller
@@ -41,6 +42,13 @@ class ConversationController extends Controller
             'description' => $request->description,
             'user_id' => $request->user()->id,
         ]);
+        $newConversation = $topic->conversations()->latest()->first();
+
+        $conversationTopicFollowers = $topic->followers()->get();
+
+        foreach ($conversationTopicFollowers as $follower) {
+            $follower->notify(new NewConversationNotification($topic, $newConversation));
+        }
 
         return redirect()->route('topics.show', $topic)
             ->with('success', 'Conversation created successfully!');

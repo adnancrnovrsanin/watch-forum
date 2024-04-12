@@ -21,7 +21,7 @@ class TopicPolicy
      */
     public function view(?User $user, Topic $topic): bool
     {
-        return $topic->approve_status === 'APPROVED';
+        return $topic->approve_status === 'APPROVED' && !$topic->isBlockedBy($user);
     }
 
     /**
@@ -96,6 +96,19 @@ class TopicPolicy
         if ($user->role->name === 'MODERATOR' && $topic->user_id === $user->id) {
             return true;
         }
+        return false;
+    }
+
+    public function block(User $user, Topic $topic): bool
+    {
+        if ($user->role === null) {
+            return false;
+        }
+
+        if ($user->role->name === 'MODERATOR' && $topic->user_id !== $user->id) {
+            return true;
+        }
+        
         return false;
     }
 }

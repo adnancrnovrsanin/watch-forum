@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Comment;
 use App\Models\Conversation;
+use App\Notifications\CommentNotification;
 use Illuminate\Http\Request;
 
 class CommentController extends Controller
@@ -40,6 +41,10 @@ class CommentController extends Controller
             'conversation_id' => $conversation->id,
             'user_id' => $request->user()->id,
         ]);
+
+        foreach ($conversation->topic->followers as $follower) {
+            $follower->notify(new CommentNotification($conversation->comments->last()));
+        }
 
         return redirect()->route('conversations.show', $conversation)
             ->with('success', 'Comment submitted successfully!');
