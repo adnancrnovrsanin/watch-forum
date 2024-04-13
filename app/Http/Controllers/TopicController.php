@@ -25,7 +25,7 @@ class TopicController extends Controller
             ->get();
 
         if (auth()->check()) {
-            $user = User::find(auth()->user()->getAuthIdentifier());
+            $user = User::find(auth()->user() !== null && auth()->user()->getAuthIdentifier());
             $followedTopicsFromWhichUserIsNotBlocked = $user->followedTopics()
                 ->whereDoesntHave('blockedUsers', function ($query) {
                     $query->where('user_id', auth()->id());

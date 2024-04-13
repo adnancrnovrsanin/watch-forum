@@ -23,7 +23,7 @@
 
         <ul class="flex space-x-6 items-center" x-data="{ showNotifications: false }">
             @auth
-            @if(auth()->user()->role != null && auth()->user()->role->name == 'ADMIN')
+            @if(auth()->user() !== null && auth()->user()->role != null && auth()->user()->role->name == 'ADMIN')
             <x-admin-nav />
             @else
             @can('create', App\Models\Topic::class)

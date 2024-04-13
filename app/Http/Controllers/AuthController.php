@@ -29,21 +29,21 @@ class AuthController extends Controller
         $remember = $request->filled('remember');
 
         if (Auth::attempt($credentials, $remember)) {
-            if (auth()->user()->approve_status === 'PENDING') {
+            if (auth()->user() !== null && auth()->user()->approve_status === 'PENDING') {
                 Auth::logout();
 
                 return redirect()->back()
                     ->with('error', 'Your account is pending approval. Check back later.');
             }
 
-            if (auth()->user()->approve_status === 'REJECTED') {
+            if (auth()->user() !== null && auth()->user()->approve_status === 'REJECTED') {
                 Auth::logout();
 
                 return redirect()->back()
                     ->with('error', 'Your account is rejected from entering our website');
             }
 
-            if (auth()->user()->role != null && auth()->user()->role->name === 'ADMIN') {
+            if (auth()->user() !== null && auth()->user()->role != null && auth()->user()->role->name === 'ADMIN') {
                 return redirect()->route('admin.dashboard');
             } else {
                 return redirect('/');

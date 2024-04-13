@@ -10,7 +10,7 @@ class AdminController extends Controller
 {
     public function dashboard()
     {
-        if (auth()->user()->role->name !== 'ADMIN') {
+        if (auth()->user() !== null && auth()->user()->role->name !== 'ADMIN') {
             return redirect('/');
         }
 
@@ -22,7 +22,7 @@ class AdminController extends Controller
     }
 
     public function topicRequests() {
-        if (auth()->user()->role->name !== 'ADMIN') {
+        if (auth()->user() !== null && auth()->user()->role->name !== 'ADMIN') {
             return redirect('/');
         }
 

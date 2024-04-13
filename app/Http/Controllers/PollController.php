@@ -75,7 +75,7 @@ class PollController extends Controller
 
     public function vote(PollAnswer $pollAnswer)
     {
-        $user = User::findOrFail(auth()->user()->getAuthIdentifier());
+        $user = User::findOrFail(auth()->user() !== null && auth()->user()->getAuthIdentifier());
 
         $pollAnswer->vote($user);
 
