@@ -10,7 +10,7 @@
                 </svg>
                 @endif
 
-                @if (auth()->user()->can('block', $reply->comment->conversation->topic) && !$reply->comment->conversation->topic->isBlockedBy($reply->user) && auth()->user()->id != $reply->user->id)
+                @if (auth()->user() !== null && auth()->user()->can('block', $reply->comment->conversation->topic) && !$reply->comment->conversation->topic->isBlockedBy($reply->user) && auth()->user()->id != $reply->user->id)
                 <form action="{{ route('topics.user.blockUser', ['topic' => $reply->comment->conversation->topic, 'user' => $reply->user]) }}" method="POST">
                     @csrf
                     <button class="p-2 rounded-full hover:bg-slate-100">
