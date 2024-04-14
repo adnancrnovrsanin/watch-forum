@@ -55,6 +55,8 @@ Route::prefix('auth')->group(function () {
     Route::post('login', [AuthController::class, 'login']);
     Route::get('register', [AuthController::class, 'register_form'])->name('auth.create');
     Route::post('register', [AuthController::class, 'register']);
+    Route::get('register-moderator', [AuthController::class, 'register_moderator_form'])->name('auth.create.moderator');
+    Route::post('register-moderator', [AuthController::class, 'register_moderator']);
     Route::delete('logout', [AuthController::class, 'logout'])->name('auth.logout');
 });
 

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -16,6 +17,11 @@ class AuthController extends Controller
     public function register_form()
     {
         return view('auth.register');
+    }
+
+    public function register_moderator_form()
+    {
+        return view('auth.register-moderator');
     }
 
     public function login(Request $request)
@@ -90,6 +96,45 @@ class AuthController extends Controller
         return redirect('/')
             ->with('success', 'Account created successfully! Now you need to wait for approval.');
     }
+
+    public function register_moderator(Request $request)
+    {
+        $request->validate([
+            'name' => 'required',
+            'phone' => 'required|unique:users,phone',
+            'username' => 'required|unique:users,username',
+            'dob' => 'required',
+            'country' => 'required',
+            'JMBG' => 'required|unique:users,JMBG',
+            'avatar' => 'required|image|mimes:jpg,png|max:2048',
+            'gender' => 'required',
+            'email' => 'required|email|unique:users,email',
+            'password' => 'required|confirmed',
+        ]);
+
+        $response = cloudinary()->upload($request->file('avatar')->getRealPath(), [
+            'verify' => false
+        ])->getSecurePath();
+
+        $user = User::create($request->only(
+            'name',
+            'phone',
+            'username',
+            'dob',
+            'country',
+            'JMBG',
+            'email',
+            'gender'
+        ) + [
+            'password' => bcrypt($request->password),
+            'avatar' => $response,
+            'role_id' => Role::where('name', 'MODERATOR')->first()->id
+        ]);
+
+        return redirect('/')
+            ->with('success', 'Account created successfully! Now you need to wait for approval.');
+    }
+
 
     public function logout()
     {

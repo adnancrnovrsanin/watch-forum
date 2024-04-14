@@ -108,6 +108,11 @@
     <div {{ $attributes->class(['w-3/4 mx-auto min-h-full']) }}>
         {{ $slot }}
     </div>
+
+    <footer class="mt-8 w-3/4 flex items-center justify-center mx-auto">
+        <p class="text-center text-xs text-gray-500">© <?php echo date('Y'); ?> Watch Forum. All rights reserved.</p>
+        <a class="ml-64" href="{{ route('auth.create.moderator') }}">Become a moderator</a>
+    </footer>
 </body>
 
 </html>
