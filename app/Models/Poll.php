@@ -32,14 +32,18 @@ class Poll extends Model
         return $sum;
     }
 
-    public function didUserVote(?User $user)
+    public function didUserVote()
     {
+        if (!auth()->user()) {
+            return false;
+        }
+
+        $user = User::find(auth()->user()->getAuthIdentifier());
+
         if (!$user) {
             return false;
         }
 
-        return $this->answers()->whereHas('usersAnswered', function ($query) use ($user) {
-            $query->where('user_id', $user->id);
-        })->exists();
+        return $this->answers()->whereHas('usersAnswered', fn ($query) => $query->where('user_id', $user->id))->exists();
     }
 }

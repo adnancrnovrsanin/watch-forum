@@ -6,6 +6,7 @@ use App\Models\PollAnswer;
 use App\Models\Topic;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class PollController extends Controller
 {
@@ -34,11 +35,21 @@ class PollController extends Controller
 
         $request->validate([
             'question' => 'required|string',
+            'answers' => 'required|array|min:2',
         ]);
 
-        $topic->polls()->create($request->only('question'));
+        $poll = $topic->polls()->create([
+            'question' => $request->input('question'),
+        ]);
 
-        return back();
+        foreach ($request->input('answers') as $answer) {
+            $poll->answers()->create([
+                'answer' => $answer,
+            ]);
+        }
+
+        return redirect()->route('topics.show', $topic)
+            ->with('status', 'Poll created successfully!');
     }
 
     /**
@@ -75,7 +86,7 @@ class PollController extends Controller
 
     public function vote(PollAnswer $pollAnswer)
     {
-        $user = User::findOrFail(auth()->user() !== null && auth()->user()->getAuthIdentifier());
+        $user = User::findOrFail(auth()->user()->getAuthIdentifier());
 
         $pollAnswer->vote($user);
 

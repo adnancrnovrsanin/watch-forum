@@ -1,6 +1,6 @@
 <div class="w-full relative">
-    @if ($pollAnswer->poll->didUserVote(auth()->user()) || auth()->guest())
-    @if ($pollAnswer->didUserVoteThisAnswer(auth()->user()))
+    @if ($pollAnswer->poll->didUserVote() || auth()->guest())
+    @if ($pollAnswer->didUserVoteThisAnswer())
     <div class="p-4 border border-green-700 rounded-md mb-4">
         <div class="flex justify-between mb-1">
             <span class="text-base font-medium text-slate-700">{{ $pollAnswer->answer }}</span>

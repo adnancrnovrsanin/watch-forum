@@ -15,7 +15,7 @@ class UserController extends Controller
 
         $user = User::find(auth()->user()->getAuthIdentifier());
 
-        $topics = $user->topics;
+        $topics = $user->topics()->where('approve_status', 'APPROVED')->get();
 
         return view('user.topics', ['topics' => $topics]);
     }

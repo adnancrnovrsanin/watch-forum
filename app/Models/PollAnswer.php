@@ -9,7 +9,7 @@ class PollAnswer extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['answer', 'votes'];
+    protected $fillable = ['answer', 'votes', 'poll_id'];
 
     public function poll()
     {
@@ -34,8 +34,14 @@ class PollAnswer extends Model
         return $totalVotes > 0 ? ($votes / $totalVotes) * 100 : 0;
     }
 
-    public function didUserVoteThisAnswer(?User $user)
+    public function didUserVoteThisAnswer()
     {
+        if (!auth()->user()) {
+            return false;
+        }
+
+        $user = User::find(auth()->user()->getAuthIdentifier());
+
         if (!$user) {
             return false;
         }
